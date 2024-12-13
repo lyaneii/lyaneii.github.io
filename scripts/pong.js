@@ -13,7 +13,7 @@ const DEFAULT_PADDLE_HEIGHT = DEFAULT_CANVAS_HEIGHT / 4;
 const DEFAULT_PADDLE_UP_KEY = "KeyW";
 const DEFAULT_PADDLE_DOWN_KEY = "KeyS";
 const DEFAULT_PADDLE_COLOR = "white";
-const DEFAULT_PADDLE_SPEED = 20;
+const DEFAULT_PADDLE_SPEED = 10;
 
 const COLORS = ["white", "green", "blue", "purple", "pink", "red", "yellow"];
 
@@ -83,7 +83,7 @@ class Ball {
 		this.y = DEFAULT_CANVAS_HEIGHT / 2;
 		this.dx = side;
 		this.dy = Math.random() * 1 - 0.5;
-		this.speed = DEFAULT_PADDLE_SPEED / 2;
+		this.speed = DEFAULT_PADDLE_SPEED / 4;
 		this.color = COLORS[0];
 	}
 
