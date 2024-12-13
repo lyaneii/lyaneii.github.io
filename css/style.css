@@ -1,0 +1,25 @@
+.paddle#player1 {
+	background-color: rgb(255, 0, 0);
+	position:absolute;
+	top: 50%;
+	height: 15%;
+	left: 2%;
+	width: 1%;
+	transform: translateY(-50%);
+}
+
+.paddle#player2 {
+	background-color: aqua;
+	position:absolute;
+	top: 50%;
+	right: 2%;
+	height: 15%;
+	width: 1%;
+	transform: translateY(-50%);
+}
+
+.canvas {
+	background-color:black;
+	width: 1024px;
+	height: 640px;
+}

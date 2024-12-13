@@ -1,0 +1,8 @@
+.env
+*.env
+*.txt
+obj
+*.o
+.vscode
+*.d
+bin
