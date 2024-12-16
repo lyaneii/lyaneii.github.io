@@ -133,6 +133,7 @@ class Game {
 		}
 		window.addEventListener("keydown", (e) => this.onKeyDown(e));
 		window.addEventListener("keyup", (e) => this.onKeyUp(e));
+		window.addEventListener("blur", () => this.paused = true)
 		this.canvas.width = this.width;
 		this.canvas.height = this.height;
 		requestAnimationFrame(this.gameLoop);
