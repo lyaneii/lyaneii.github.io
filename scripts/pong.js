@@ -4,7 +4,10 @@ let p1log = document.getElementById("paddle1");
 let p2log = document.getElementById("paddle2");
 let ballpos = document.getElementById("ballpos");
 let balldir = document.getElementById("balldir");
+let scoreLog = document.getElementById("score");
+let gameStatus = document.getElementById("game-status");
 
+const COLORS = ["#222222", "lightblue", "white", "green", "blue", "purple", "pink", "red", "yellow"];
 const DEFAULT_CANVAS_WIDTH = 1024;
 const DEFAULT_CANVAS_HEIGHT = 640;
 const DEFAULT_PADDLE_PADDING = 50;
@@ -12,10 +15,10 @@ const DEFAULT_PADDLE_WIDTH = DEFAULT_CANVAS_HEIGHT / 40;
 const DEFAULT_PADDLE_HEIGHT = DEFAULT_CANVAS_HEIGHT / 4;
 const DEFAULT_PADDLE_UP_KEY = "KeyW";
 const DEFAULT_PADDLE_DOWN_KEY = "KeyS";
-const DEFAULT_PADDLE_COLOR = "white";
+const DEFAULT_PADDLE_COLOR = COLORS[0];
 const DEFAULT_PADDLE_SPEED = 10;
+const DEFAULT_BALL_SIZE = DEFAULT_PADDLE_WIDTH * 1.5;
 
-const COLORS = ["white", "green", "blue", "purple", "pink", "red", "yellow"];
 
 class Score {
 	constructor ({
@@ -42,7 +45,7 @@ class Paddle {
 		y = DEFAULT_CANVAS_HEIGHT / 2 - DEFAULT_PADDLE_HEIGHT / 2, 
 		up = DEFAULT_PADDLE_UP_KEY, 
 		down = DEFAULT_PADDLE_DOWN_KEY, 
-		color = DEFAULT_PADDLE_COLOR,
+		color = COLORS[0],
 		speed = DEFAULT_PADDLE_SPEED,
 	} = {}) {
 		this.width = width;
@@ -63,12 +66,13 @@ class Paddle {
 
 class Ball {
 	constructor ({
-		size = DEFAULT_PADDLE_WIDTH,
+		size = DEFAULT_BALL_SIZE,
 		x = DEFAULT_CANVAS_WIDTH / 2,
 		y = DEFAULT_CANVAS_HEIGHT / 2,
 		dx = 1,
 		dy = 0,
-		speed = 10,
+		speed = DEFAULT_PADDLE_SPEED / 4,
+		color = COLORS[0],
 	} = {}) {
 		this.size = size;
 		this.x = x;
@@ -76,6 +80,7 @@ class Ball {
 		this.dx = dx;
 		this.dy = dy;
 		this.speed = speed;
+		this.color = color;
 	}
 
 	reset(side) {
@@ -103,7 +108,7 @@ class Game {
 		p1 = new Paddle(),
 		p2 = new Paddle({x: width - DEFAULT_PADDLE_WIDTH - DEFAULT_PADDLE_PADDING, 
 			up: "ArrowUp", down: "ArrowDown"}),
-		ball = new Ball({size: 20, dx: Math.random() % 2 == 0 ? 1 : -1, dy: Math.random() * 1 - 0.5}),
+		ball = new Ball({dx: Math.random() % 2 == 0 ? 1 : -1, dy: Math.random() * 1 - 0.5}),
 		running = false,
 		paused = false,
 	} = {}) {
@@ -147,19 +152,20 @@ class Game {
 		} else if (this.running) {
 			this.updateBall();
 			this.updatePaddles();
+			gameStatus.textContent = "";
 		} else {
 			this.drawControls();
 		}
+		this.drawBall(this.ball);
 		this.drawPaddle(this.p1);
 		this.drawPaddle(this.p2);
-		this.drawBall(this.ball);
 		this.drawScore();
 		// this.debug();
 		requestAnimationFrame(this.gameLoop);
 	}
 	
 	onKeyDown(e) {
-		if (e.code == "KeyP") {
+		if (e.code == "Escape") {
 			this.paused = !this.paused;
 		} else if (!this.paused) {
 			this.keyStates[e.code] = true;
@@ -172,28 +178,15 @@ class Game {
 	}
 
 	drawScore() {
-		this.ctx.fillStyle = "white";
-		this.ctx.font = "bold 64px arial";
-		this.ctx.textAlign = "center";
-		this.ctx.fillText(`${this.score.p1} - ${this.score.p2}`, this.width / 2, 80);
+		scoreLog.textContent = `${this.score.p1} : ${this.score.p2}`;
 	}
 	
 	drawPaused() {
-		this.ctx.fillStyle = "red";
-		this.ctx.font = "bold 128px arial";
-		this.ctx.textAlign = "center";
-		this.ctx.fillText("PAUSED", this.width / 2, this.height / 2 + 128 / 2);
+		gameStatus.textContent = "Press ESC to unpause...";
 	}
 
 	drawControls() {
-		this.ctx.fillStyle = "white";
-		this.ctx.font = "bold 32px arial";
-		// this.ctx.textAlign = "left";
-		// this.ctx.fillText("(W/S)", this.p1.x + this.p1.width + 16, this.height / 2);
-		// this.ctx.textAlign = "right";
-		// this.ctx.fillText("(▲|▼)", this.p2.x - this.p2.width / 2, this.height / 2);
-		this.ctx.textAlign = "center";
-		this.ctx.fillText("press any key to begin...", this.width / 2, this.height / 2 + 64);
+		gameStatus.textContent = "Press any key to begin...";
 	}
 
 	updateBall() {
@@ -232,25 +225,25 @@ class Game {
 		}
 
 		// left paddle collision
-		if ((this.ball.x - this.ball.size / 2) + this.ball.dx * this.ball.speed <= this.p1.x + this.p1.width / 2 &&
-		this.ball.x - this.ball.size / 2 > this.p1.x + this.p1.width / 2 &&
+		if ((this.ball.x - this.ball.size / 2) + this.ball.dx * this.ball.speed <= this.p1.x + this.p1.width &&
+		this.ball.x - this.ball.size / 2 > this.p1.x + this.p1.width &&
 		this.ball.y + this.ball.size >= this.p1.y &&
 		this.ball.y - this.ball.size <= this.p1.y + this.p1.height) {
 			this.ball.dx = -this.ball.dx;
 			this.ball.dy = (this.ball.y - (this.p1.y + this.p1.height / 2) - 0.5) / this.p1.height;
 			this.ball.speed += 1;
-			this.ball.randomColor();
+			// this.ball.randomColor();
 		}
 		
 		// right paddle collision
-		if ((this.ball.x + this.ball.size / 2) + this.ball.dx * this.ball.speed >= this.p2.x + this.p2.width / 2 &&
-		this.ball.x + this.ball.size / 2 < this.p2.x + this.p2.width / 2 &&
+		if ((this.ball.x + this.ball.size / 2) + this.ball.dx * this.ball.speed >= this.p2.x &&
+		this.ball.x + this.ball.size / 2 < this.p2.x &&
 		this.ball.y + this.ball.size >= this.p2.y &&
 		this.ball.y - this.ball.size <= this.p2.y + this.p2.height) {
 			this.ball.dx = -this.ball.dx; 
 			this.ball.dy = (this.ball.y - (this.p2.y + this.p2.height / 2) - 0.5) / this.p2.height;
 			this.ball.speed += 1;
-			this.ball.randomColor();
+			// this.ball.randomColor();
 		}
 		
 		this.ball.x += this.ball.dx * this.ball.speed;
