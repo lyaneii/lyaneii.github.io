@@ -97,6 +97,7 @@ class Ball {
 	}
 }
 
+
 class Game {
 	constructor ({
 		canvas = document.getElementById("canvas"), 
@@ -111,6 +112,7 @@ class Game {
 		ball = new Ball({dx: Math.random() % 2 == 0 ? 1 : -1, dy: Math.random() * 1 - 0.5}),
 		running = false,
 		paused = false,
+		sparks = [],
 	} = {}) {
 		this.canvas = canvas;
 		this.ctx = ctx;
@@ -124,6 +126,7 @@ class Game {
 		this.ball = ball;
 		this.running = running;
 		this.paused = paused;
+		this.sparks = sparks;
 	}
 	
 	init() {
@@ -157,6 +160,7 @@ class Game {
 		} else {
 			this.drawControls();
 		}
+		this.drawSparks();
 		this.drawBall(this.ball);
 		this.drawPaddle(this.p1);
 		this.drawPaddle(this.p2);
@@ -188,6 +192,33 @@ class Game {
 
 	drawControls() {
 		gameStatus.textContent = "Press any key to begin...";
+	}
+
+	addSparks(x, y, amount) {
+		for (let i = 0; i < amount ; i++) {
+			this.sparks.push({
+				x: x, 
+				y: y, 
+				dx: Math.random() * 5 - 5, 
+				dy: Math.random() * 5 - 5, 
+				t: 0, 
+				size: Math.random() * 20 + 1,
+			})
+		}
+	}
+
+	drawSparks() {
+		this.sparks.forEach((spark, index) => {
+			this.ctx.fillRect(
+				spark.x + spark.dx * spark.t, 
+				spark.y + spark.dy * spark.t, 
+				spark.size, spark.size);
+			this.ctx.fill();
+			spark.size--;
+			spark.t++;
+			if (spark.size <= 0)
+				this.sparks.splice(index, 1);
+		});
 	}
 
 	updateBall() {
@@ -233,6 +264,8 @@ class Game {
 			this.ball.dx = -this.ball.dx;
 			this.ball.dy = (this.ball.y - (this.p1.y + this.p1.height / 2) - 0.5) / this.p1.height;
 			this.ball.speed += 1;
+
+			this.addSparks(this.ball.x, this.ball.y, 5);
 			// this.ball.randomColor();
 		}
 		
@@ -244,6 +277,8 @@ class Game {
 			this.ball.dx = -this.ball.dx; 
 			this.ball.dy = (this.ball.y - (this.p2.y + this.p2.height / 2) - 0.5) / this.p2.height;
 			this.ball.speed += 1;
+
+			this.addSparks(this.ball.x, this.ball.y, 5);
 			// this.ball.randomColor();
 		}
 		
@@ -281,10 +316,16 @@ class Game {
 		this.ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
 	}
 	
+	// drawBall(ball) {
+		// 	this.ctx.fillStyle = ball.color;
+		// 	this.ctx.beginPath();
+		// 	this.ctx.arc(ball.x, ball.y, ball.size / 2, 0, 2 * Math.PI);
+		// 	this.ctx.fill();
+		// }
+	
 	drawBall(ball) {
 		this.ctx.fillStyle = ball.color;
-		this.ctx.beginPath();
-		this.ctx.arc(ball.x, ball.y, ball.size / 2, 0, 2 * Math.PI);
+		this.ctx.fillRect(ball.x - ball.size / 2, ball.y - ball.size / 2, ball.size, ball.size);
 		this.ctx.fill();
 	}
 }
