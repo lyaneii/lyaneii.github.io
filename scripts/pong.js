@@ -236,8 +236,8 @@ class Game {
 				this.score.reset();
 			}
 
-			this.p1.reset(DEFAULT_PADDLE_PADDING, canvas.height / 2 - this.p1.height / 2);
-			this.p2.reset(canvas.width - DEFAULT_PADDLE_PADDING - this.p2.width, canvas.height / 2 - this.p1.height / 2);
+			this.p1.reset(DEFAULT_PADDLE_PADDING, this.height / 2 - this.p1.height / 2);
+			this.p2.reset(this.width - DEFAULT_PADDLE_PADDING - this.p2.width, this.height / 2 - this.p1.height / 2);
 			this.ball.reset(-1);
 			this.running = false;
 		}
@@ -250,8 +250,8 @@ class Game {
 				this.score.reset();
 			}
 			
-			this.p1.reset(DEFAULT_PADDLE_PADDING, canvas.height / 2 - this.p1.height / 2);
-			this.p2.reset(canvas.width - DEFAULT_PADDLE_PADDING - this.p2.width, canvas.height / 2 - this.p1.height / 2);
+			this.p1.reset(DEFAULT_PADDLE_PADDING, this.height / 2 - this.p1.height / 2);
+			this.p2.reset(this.width - DEFAULT_PADDLE_PADDING - this.p2.width, this.height / 2 - this.p1.height / 2);
 			this.ball.reset(1);
 			this.running = false;
 		}
@@ -291,23 +291,19 @@ class Game {
 		// left paddle movement
 		if (this.keyStates[this.p1.up]) {
 			this.p1.y -= this.p1.speed;
-			if (this.p1.y < 0)
-				this.p1.y = 0;
+			this.p1.y = Math.max(this.p1.y, 0);
 		} else if (this.keyStates[this.p1.down]) {
 			this.p1.y += this.p1.speed;
-			if (this.p1.y + this.p1.height > this.canvas.height)
-				this.p1.y = this.canvas.height - this.p1.height;
+			this.p1.y = Math.min(this.p1.y, this.height - this.p1.height);
 		}
 		
 		// right paddle movement
 		if (this.keyStates[this.p2.up]) {
 			this.p2.y -= this.p2.speed;
-			if (this.p2.y < 0)
-				this.p2.y = 0;
+			this.p2.y = Math.max(this.p2.y, 0);
 		} else if (this.keyStates[this.p2.down]) {
 			this.p2.y += this.p2.speed;
-			if (this.p2.y + this.p2.height > this.canvas.height)
-				this.p2.y = this.canvas.height - this.p2.height;
+			this.p2.y = Math.min(this.p2.y, this.height - this.p2.height);
 		}
 	}
 

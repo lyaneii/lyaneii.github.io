@@ -8,29 +8,14 @@
 	<title>Pong</title>
 </head>
 <body>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="mx-auto">
-				<p class="text-center" id="score"></p>
-			</div>
+	<div class="container-fluid d-flex flex-column align-items-center">
+		<p class="text-center" id="score"></p>
+		<div class="row mx-auto">
+			<canvas class="canvas" id="canvas">
+				blabla
+			</canvas>
 		</div>
-		<div class="row">
-			<div class="col-10 mx-auto">
-				<canvas class="canvas" id="canvas">
-					blabla
-				</canvas>
-				<p id="log"></p>
-				<p id="paddle1"></p>
-				<p id="paddle2"></p>
-				<p id="ballpos"></p>
-				<p id="balldir"></p>
-			</div>	
-		</div>
-		<div class="row">
-			<div class="mx-auto">
-				<p class="text-center" id="game-status"></p>
-			</div>
-		</div>
+			<p class="text-center" id="game-status"></p>
 		<script src="scripts/pong.js"></script>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
